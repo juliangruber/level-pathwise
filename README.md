@@ -1,14 +1,31 @@
 
 # level-pathwise
 
+  Work In Progress,
+
   Nested storage engine
 
 ## Example
 
 ```js
-var level-pathwise = require('level-pathwise');
+import Pathwise from './';
+import { default as level } from 'level';
 
+const db = level('db');
+const store = new Pathwise(db);
 
+store.put({
+  foo: {
+    bar: ['beep', 'boop']   
+  }
+}, err => {
+  if (err) throw err;
+  dump(db, () => {
+    store.get([], console.log);
+
+    // => { "foo": { "bar": { "0": "beep", "1": "boop" } } }
+  });
+});
 ```
 
 ## Installation
