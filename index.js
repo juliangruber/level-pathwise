@@ -3,7 +3,6 @@ import { default as defaults } from 'levelup-defaults';
 import { default as bytewise } from 'bytewise';
 import { default as type } from 'component-type';
 import { default as after } from 'after';
-import collect from 'collect-stream';
 import { default as deleteRange } from 'level-delete-range';
 import { default as streamToArray } from 'stream-to-array';
 
@@ -55,7 +54,7 @@ export default class Pathwise {
     let ret = {};
     let el = ret;
 
-    collect(this._db.createReadStream({
+    streamToArray(this._db.createReadStream({
       start: path,
       end: path.concat(undefined)
     }), (err, data) => {
