@@ -3,6 +3,7 @@ import { default as defaults } from 'levelup-defaults';
 import { default as bytewise } from 'bytewise';
 import { default as type } from 'component-type';
 import { default as after } from 'after';
+import collect from 'collect-stream';
 
 export default class Pathwise {
   constructor(db) {
@@ -33,6 +34,32 @@ export default class Pathwise {
         batch.put(key, obj);
         break;
     }
+  }
+  get(path, fn) {
+    var ret = {};
+    var el = ret;
+
+    collect(this._db.createReadStream({
+      start: path.concat(null),
+      end: path.concat(undefined)
+    }), (err, data) => {
+      if (err) return fn(err);
+      for (var kv of data) {
+        var segs = kv.key;
+        segs.forEach((seg, idx) => {
+          if (!el[seg]) {
+            if (idx == segs.length - 1) {
+              el[seg] = kv.value;
+            } else {
+              el[seg] = {};
+            }
+          }
+          el = el[seg];
+        });
+        el = ret;
+      }
+      fn(null, ret);
+    });
   }
 }
 

@@ -2,6 +2,7 @@
   "name": "level-pathwise",
   "version": "0.0.0",
   "description": "Nested storage engine",
+  "main": "build.js",
   "scripts": {
     "test": "make test"
   },
@@ -15,6 +16,7 @@
   "dependencies": {
     "after": "^0.8.1",
     "bytewise": "^1.1.0",
+    "collect-stream": "^1.1.1",
     "component-type": "^1.1.0",
     "levelup-defaults": "^1.0.2"
   }

@@ -11,11 +11,16 @@ store.put({
   }
 }, err => {
   if (err) throw err;
-  dump(db);
+  dump(db, () => {
+    store.get([], console.log);
+  });
 });
 
-function dump(db){
+function dump(db, fn){
   db.createReadStream({
-    keyEncoding: bytewise
-  }).on('data', console.log)
+    keyEncoding: bytewise,
+    valueEncoding: 'json'
+  })
+  .on('data', console.log)
+  .on('end', fn);
 }
