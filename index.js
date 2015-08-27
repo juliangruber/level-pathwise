@@ -4,6 +4,7 @@ import { default as bytewise } from 'bytewise';
 import { default as type } from 'component-type';
 import { default as after } from 'after';
 import collect from 'collect-stream';
+import { default as deleteRange } from 'level-delete-range';
 
 export default class Pathwise {
   constructor(db) {
@@ -60,6 +61,12 @@ export default class Pathwise {
       }
       fn(null, ret);
     });
+  }
+  del(path, fn) {
+    deleteRange(this._db, {
+      start: path.concat(null),
+      end: path.concat(undefined)
+    }, fn);
   }
 }
 
