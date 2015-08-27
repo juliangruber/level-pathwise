@@ -3,7 +3,7 @@
 
   Work In Progress,
 
-  Nested storage engine
+  Nested storage engine, basically letting you treat your leveldb like one big object which you can select subjections of.
 
 ## Example
 
@@ -22,6 +22,9 @@ store.put({
 
   store.get([], console.log);
   // => { "foo": { "bar": { "0": "beep", "1": "boop" } } }
+
+  store.get(['foo', 'bar'], console.log);
+  // => { "0": "beep", "1": "boop" } 
 });
 ```
 

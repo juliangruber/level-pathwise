@@ -1,6 +1,5 @@
 import Pathwise from './';
 import { default as level } from 'level';
-import { default as bytewise } from 'bytewise';
 
 const db = level('db');
 const store = new Pathwise(db);
@@ -11,16 +10,15 @@ store.put({
   }
 }, err => {
   if (err) throw err;
-  dump(db, () => {
-    store.get([], console.log);
+
+  store.get([], (err, obj) => {
+    if (err) throw err;
+    
+    console.log(obj);
+    store.get(['foo', 'bar'], (err, obj) => {
+      if (err) throw err;
+
+      console.log(obj);
+    });
   });
 });
-
-function dump(db, fn){
-  db.createReadStream({
-    keyEncoding: bytewise,
-    valueEncoding: 'json'
-  })
-  .on('data', console.log)
-  .on('end', fn);
-}
