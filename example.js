@@ -29,6 +29,12 @@ store.put({
           if (err) throw err;
 
           console.log('=> %j', obj);
+
+          store.children([], (err, children) => {
+            if (err) throw err;
+
+            console.log('=> %j', children);
+          });
         });
       });
     });

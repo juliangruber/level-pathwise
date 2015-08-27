@@ -5,6 +5,7 @@ import { default as type } from 'component-type';
 import { default as after } from 'after';
 import collect from 'collect-stream';
 import { default as deleteRange } from 'level-delete-range';
+import { default as streamToArray } from 'stream-to-array';
 
 export default class Pathwise {
   constructor(db) {
@@ -72,6 +73,18 @@ export default class Pathwise {
       start: path.concat(null),
       end: path.concat(undefined)
     }, fn);
+  }
+  children(path, fn) {
+    streamToArray(this._db.createKeyStream({
+      start: path.concat(null),
+      end: path.concat(undefined)
+    }), (err, paths) => {
+      console.log('paths', paths)
+      if (err) return fn(err);
+      fn(null, paths.map(p => {
+        return p[path.length];
+      }));
+    });
   }
 }
 

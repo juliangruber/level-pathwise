@@ -26,6 +26,9 @@ store.put({
       store.get([], (err, obj) => {
         // obj => {"foo":{"baz":"bleep"}}
 
+        store.children([], console.log);
+        // => ['foo']
+
         store.get(['foo', 'baz'], (err, obj) => {
           // obj => "bleep"
 
