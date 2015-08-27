@@ -13,22 +13,24 @@ export default class Pathwise {
     });
   }
   put(obj, fn) {
-    this._put([], obj, fn);  
+    var batch = this._db.batch();
+    this._write(batch, [], obj, fn);  
+    batch.write(fn);
   }
-  _put(key, obj, fn) {
+  _write(batch, key, obj, fn) {
     switch(type(obj)) {
       case 'object':
         const keys = Object.keys(obj);
         const next = after(keys.length, fn);
         keys.forEach(k => {
-          this._put(key.concat(k), obj[k], next);
+          this._write(batch, key.concat(k), obj[k], next);
         });
         break;
       case 'array':
-        this._put(key, arrToObj(obj), fn);
+        this._write(batch, key, arrToObj(obj), fn);
         break;
       default:
-        this._db.put(key, obj, fn);
+        batch.put(key, obj);
         break;
     }
   }
