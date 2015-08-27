@@ -15,10 +15,13 @@ export default class Pathwise {
       valueEncoding: 'json'
     });
   }
-  put(obj, fn) {
-    var batch = this._db.batch();
+  // add position parameter
+  put(obj, opts, fn) {
+    if (typeof opts == 'function') [opts, fn] = [{}, opts];
+    const batch = opts.batch || this._db.batch();
     this._write(batch, [], obj, fn);  
-    batch.write(fn);
+    if (opts.batch) setImmediate(fn);
+    else batch.write(fn);
   }
   _write(batch, key, obj, fn) {
     switch(type(obj)) {
@@ -37,9 +40,20 @@ export default class Pathwise {
         break;
     }
   }
+  batch(ops, fn) {
+    const batch = this._db.batch();
+    const next = after(ops.length, err => {
+      if (err) return fn(err);
+      batch.write(fn);
+    });
+    ops.forEach(op => {
+      if (op.type == 'put') this.put(op.data, { batch: batch }, next);
+      else if (op.type == 'del') this.del(op.path, { batch: batch }, next);
+    });
+  }
   get(path, fn) {
-    var ret = {};
-    var el = ret;
+    let ret = {};
+    let el = ret;
 
     collect(this._db.createReadStream({
       start: path,
@@ -68,11 +82,19 @@ export default class Pathwise {
       fn(null, ret);
     });
   }
-  del(path, fn) {
-    deleteRange(this._db, {
+  del(path, opts, fn) {
+    if (typeof opts == 'function') [opts, fn] = [{}, opts];
+    const batch = opts.batch || this._db.batch();
+
+    streamToArray(this._db.createKeyStream({
       start: path.concat(null),
       end: path.concat(undefined)
-    }, fn);
+    }), (err, keys) => {
+      if (err) return fn(err);
+      keys.forEach(key => batch.del(key));
+      if (opts.batch) fn();
+      else batch.write(fn);
+    });
   }
   children(path, fn) {
     streamToArray(this._db.createKeyStream({

@@ -34,6 +34,19 @@ store.put({
             if (err) throw err;
 
             console.log('=> %j', children);
+
+            store.batch([
+              { type: 'put', data: { i: { said: { what: 'what' } } } },
+              { type: 'del', path: ['foo'] }
+            ], err => {
+              if (err) throw err;
+
+              store.get([], (err, obj) => {
+                if (err) throw err;
+
+                console.log('=> %j', obj);
+              });
+            });
           });
         });
       });

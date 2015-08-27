@@ -32,6 +32,10 @@ store.put({
         store.get(['foo', 'baz'], (err, obj) => {
           // obj => "bleep"
 
+          store.batch([
+            { type: 'put', { i: said: { what: 'what' } } },
+            { type: 'del', path: ['foo'] }
+          ], console.log);
         });
       });
     });
