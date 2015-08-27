@@ -101,7 +101,6 @@ export default class Pathwise {
       start: path.concat(null),
       end: path.concat(undefined)
     }), (err, paths) => {
-      console.log('paths', paths)
       if (err) return fn(err);
       fn(null, paths.map(p => {
         return p[path.length];
