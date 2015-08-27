@@ -6,7 +6,8 @@ const store = new Pathwise(db);
 
 store.put({
   foo: {
-    bar: ['beep', 'boop']   
+    bar: ['beep', 'boop'],
+    baz: 'bleep'  
   }
 }, err => {
   if (err) throw err;
@@ -14,11 +15,22 @@ store.put({
   store.get([], (err, obj) => {
     if (err) throw err;
     
-    console.log(obj);
-    store.get(['foo', 'bar'], (err, obj) => {
+    console.log('=> %j', obj);
+
+    store.del(['foo', 'bar'], err => {
       if (err) throw err;
 
-      console.log(obj);
+      store.get([], (err, obj) => {
+        if (err) throw err;
+
+        console.log('=> %j', obj);
+
+        store.get(['foo', 'baz'], (err, obj) => {
+          if (err) throw err;
+
+          console.log('=> %j', obj);
+        });
+      });
     });
   });
 });

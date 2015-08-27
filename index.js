@@ -41,23 +41,28 @@ export default class Pathwise {
     var el = ret;
 
     collect(this._db.createReadStream({
-      start: path.concat(null),
+      start: path,
       end: path.concat(undefined)
     }), (err, data) => {
       if (err) return fn(err);
+
       for (var kv of data) {
-        var segs = kv.key.slice(path.length);
-        segs.forEach((seg, idx) => {
-          if (!el[seg]) {
-            if (idx == segs.length - 1) {
-              el[seg] = kv.value;
-            } else {
-              el[seg] = {};
+        const segs = kv.key.slice(path.length);
+        if (segs.length) {
+          segs.forEach((seg, idx) => {
+            if (!el[seg]) {
+              if (idx == segs.length - 1) {
+                el[seg] = kv.value;
+              } else {
+                el[seg] = {};
+              }
             }
-          }
-          el = el[seg];
-        });
-        el = ret;
+            el = el[seg];
+          });
+          el = ret;
+        } else {
+          ret = kv.value;
+        }
       }
       fn(null, ret);
     });
