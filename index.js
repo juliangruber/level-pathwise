@@ -47,7 +47,7 @@ export default class Pathwise {
     }), (err, data) => {
       if (err) return fn(err);
 
-      for (var kv of data) {
+      data.forEach((kv) => {
         const segs = kv.key.slice(path.length);
         if (segs.length) {
           segs.forEach((seg, idx) => {
@@ -64,7 +64,7 @@ export default class Pathwise {
         } else {
           ret = kv.value;
         }
-      }
+      });
       fn(null, ret);
     });
   }
