@@ -15,16 +15,24 @@ const store = new Pathwise(level('db'));
 
 store.put({
   foo: {
-    bar: ['beep', 'boop']   
+    bar: ['beep', 'boop'],
+    baz: 'bleep'  
   }
 }, err => {
-  if (err) throw err;
+  store.get([], (err, obj) => {
+    // obj => {"foo":{"bar":{"0":"beep","1":"boop"},"baz":"bleep"}}
 
-  store.get([], console.log);
-  // => { "foo": { "bar": { "0": "beep", "1": "boop" } } }
+    store.del(['foo', 'bar'], err => {
+      store.get([], (err, obj) => {
+        // obj => {"foo":{"baz":"bleep"}}
 
-  store.get(['foo', 'bar'], console.log);
-  // => { "0": "beep", "1": "boop" } 
+        store.get(['foo', 'baz'], (err, obj) => {
+          // obj => "bleep"
+
+        });
+      });
+    });
+  });
 });
 ```
 
