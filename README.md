@@ -8,11 +8,10 @@
 ## Example
 
 ```js
-import Pathwise from './';
+import Pathwise from 'level-pathwise';
 import { default as level } from 'level';
 
-const db = level('db');
-const store = new Pathwise(db);
+const store = new Pathwise(level('db'));
 
 store.put({
   foo: {
@@ -20,11 +19,9 @@ store.put({
   }
 }, err => {
   if (err) throw err;
-  dump(db, () => {
-    store.get([], console.log);
 
-    // => { "foo": { "bar": { "0": "beep", "1": "boop" } } }
-  });
+  store.get([], console.log);
+  // => { "foo": { "bar": { "0": "beep", "1": "boop" } } }
 });
 ```
 
