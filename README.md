@@ -33,7 +33,7 @@ store.put({
           // obj => "bleep"
 
           store.batch([
-            { type: 'put', { i: said: { what: 'what' } } },
+            { type: 'put', data: { i: said: { what: 'what' } } },
             { type: 'del', path: ['foo'] }
           ], console.log);
         });
