@@ -49,6 +49,31 @@ store.put({
 $ npm install level-pathwise
 ```
 
+## API
+
+### Pathwise(db)
+
+  Instantiate a new pathwise store, using `db`.
+
+### #get(path, fn)
+
+  Get the object at `path` with all its children.
+
+### #del(path, fn)
+
+  Delete the object at `path` with all its children.
+
+### #children(path, fn)
+
+  Get the direct children of `path`.
+
+### #batch(ops, fn)
+
+  Execute multiple `get` and `del` operations in one atomic batch. `ops` is an array with objects of type
+
+- `{ type: 'put', data: data }`
+- `{ type: 'del', path: 'foo' }`
+
 ## License
 
   MIT
