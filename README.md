@@ -13,7 +13,7 @@ import { default as level } from 'level';
 
 const store = new Pathwise(level('db'));
 
-store.put({
+store.put([], {
   foo: {
     bar: ['beep', 'boop'],
     baz: 'bleep'  
@@ -33,7 +33,7 @@ store.put({
           // obj => "bleep"
 
           store.batch([
-            { type: 'put', data: { i: said: { what: 'what' } } },
+            { type: 'put', path: [], data: { i: said: { what: 'what' } } },
             { type: 'del', path: ['foo'] }
           ], console.log);
         });
@@ -55,6 +55,10 @@ $ npm install level-pathwise
 
   Instantiate a new pathwise store, using `db`.
 
+### #put(path, object, fn)
+
+  Store `object` at `path`.
+
 ### #get(path, fn)
 
   Get the object at `path` with all its children.
@@ -71,8 +75,8 @@ $ npm install level-pathwise
 
   Execute multiple `get` and `del` operations in one atomic batch. `ops` is an array with objects of type
 
-- `{ type: 'put', data: data }`
-- `{ type: 'del', path: 'foo' }`
+- `{ type: 'put', path: path, data: data }`
+- `{ type: 'del', path: path }`
 
 ## License
 

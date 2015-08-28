@@ -4,7 +4,7 @@ import { default as level } from 'level';
 const db = level('db');
 const store = new Pathwise(db);
 
-store.put({
+store.put([], {
   foo: {
     bar: ['beep', 'boop'],
     baz: 'bleep'  
@@ -36,7 +36,7 @@ store.put({
             console.log('=> %j', children);
 
             store.batch([
-              { type: 'put', data: { i: { said: { what: 'what' } } } },
+              { type: 'put', path: [], data: { i: { said: { what: 'yo' } } } },
               { type: 'del', path: ['foo'] }
             ], err => {
               if (err) throw err;

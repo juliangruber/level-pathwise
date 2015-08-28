@@ -14,11 +14,10 @@ export default class Pathwise {
       valueEncoding: 'json'
     });
   }
-  // add position parameter
-  put(obj, opts, fn) {
+  put(path, obj, opts, fn) {
     if (typeof opts == 'function') [opts, fn] = [{}, opts];
     const batch = opts.batch || this._db.batch();
-    this._write(batch, [], obj, fn);  
+    this._write(batch, path, obj, fn);  
     if (opts.batch) setImmediate(fn);
     else batch.write(fn);
   }
@@ -46,7 +45,7 @@ export default class Pathwise {
       batch.write(fn);
     });
     ops.forEach(op => {
-      if (op.type == 'put') this.put(op.data, { batch: batch }, next);
+      if (op.type == 'put') this.put(op.path, op.data, { batch: batch }, next);
       else if (op.type == 'del') this.del(op.path, { batch: batch }, next);
     });
   }
