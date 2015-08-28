@@ -10,7 +10,8 @@
   "devDependencies": {
     "babel": "^5.8.21",
     "level": "^1.3.0",
-    "tape": "*"
+    "memdb": "^1.0.1",
+    "tape": "^4.2.0"
   },
   "license": "MIT",
   "dependencies": {
