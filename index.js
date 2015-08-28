@@ -85,7 +85,7 @@ export default class Pathwise {
     const batch = opts.batch || this._db.batch();
 
     streamToArray(this._db.createKeyStream({
-      start: path.concat(null),
+      start: path,
       end: path.concat(undefined)
     }), (err, keys) => {
       if (err) return fn(err);
