@@ -30,21 +30,27 @@ store.put([], {
 
           console.log('=> %j', obj);
 
-          store.children([], (err, children) => {
+          store.children(['foo', 'baz'], (err, children) => {
             if (err) throw err;
 
             console.log('=> %j', children);
 
-            store.batch([
-              { type: 'put', path: [], data: { i: { said: { what: 'yo' } } } },
-              { type: 'del', path: ['foo'] }
-            ], err => {
+            store.children([], (err, children) => {
               if (err) throw err;
 
-              store.get([], (err, obj) => {
+              console.log('=> %j', children);
+
+              store.batch([
+                { type: 'put', path: [], data: { i: { said: { what: 'yo' } } } },
+                { type: 'del', path: ['foo'] }
+              ], err => {
                 if (err) throw err;
 
-                console.log('=> %j', obj);
+                store.get([], (err, obj) => {
+                  if (err) throw err;
+
+                  console.log('=> %j', obj);
+                });
               });
             });
           });

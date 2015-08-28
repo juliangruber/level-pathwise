@@ -95,13 +95,13 @@ export default class Pathwise {
     });
   }
   children(path, fn) {
-    streamToArray(this._db.createKeyStream({
-      start: path.concat(null),
+    streamToArray(this._db.createReadStream({
+      start: path,
       end: path.concat(undefined)
-    }), (err, paths) => {
+    }), (err, kv) => {
       if (err) return fn(err);
-      fn(null, paths.map(p => {
-        return p[path.length];
+      fn(null, kv.map(_kv => {
+        return _kv.key[path.length] || _kv.value;
       }));
     });
   }
