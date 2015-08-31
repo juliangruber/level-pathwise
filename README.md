@@ -5,6 +5,8 @@
 
   Nested storage engine, basically letting you treat your leveldb like one big object which you can select subjections of.
 
+  [![build status](https://secure.travis-ci.org/juliangruber/level-pathwise.svg)](http://travis-ci.org/juliangruber/level-pathwise)
+
 ## Example
 
 ```js
