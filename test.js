@@ -77,7 +77,23 @@ test('Pathwise', t => {
   });
 
   t.test('#batch(ops, fn)', t => {
-    t.end();
+    const p = new Pathwise(level());
+    p.batch([{ type: 'put', path: [], data: 'hey' }], err => {
+      t.error(err);
+      p.get([], (err, data) => {
+        t.error(err);
+        t.equal(data, 'hey');
+
+        p.batch([{ type: 'del', path: [] }], err => {
+          t.error(err);
+          p.get([], (err, data) => {
+            t.error(err);
+            t.deepEqual(data, {});
+            t.end();
+          });
+        });
+      });
+    });
   });
 
   t.test('#get(path, fn)', t => {
