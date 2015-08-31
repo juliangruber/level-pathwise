@@ -57,17 +57,25 @@ $ npm install level-pathwise
 
   Instantiate a new pathwise store, using `db`.
 
-### #put(path, object, fn)
+### #put(path, object[, opts], fn)
 
   Store `object` at `path`.
+
+  Options:
+
+  - `batch`: LevelUP batch object to use
 
 ### #get(path, fn)
 
   Get the object at `path` with all its children.
 
-### #del(path, fn)
+### #del(path[, opts], fn)
 
   Delete the object at `path` with all its children.
+
+  Options:
+
+  - `batch`: LevelUP batch object to use
 
 ### #children(path, fn)
 
