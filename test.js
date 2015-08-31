@@ -160,7 +160,23 @@ test('Pathwise', t => {
   });
 
   t.test('#children(path, fn)', t => {
-    t.end();
+    const p = new Pathwise(level());
+    p.put([], { foo: { bar: 'baz' } }, err => {
+      t.error(err);
+      p.children([], (err, children) => {
+        t.error(err);
+        t.deepEqual(children, ['foo']);
+        p.children(['foo'], (err, children) => {
+          t.error(err);
+          t.deepEqual(children, ['bar']);
+          p.children(['foo', 'bar'], (err, children) => {
+            t.error(err);
+            t.deepEqual(children, ['baz']);
+            t.end();
+          });
+        });
+      });
+    });
   });
 
   t.end();
