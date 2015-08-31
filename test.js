@@ -60,7 +60,20 @@ test('Pathwise', t => {
   });
 
   t.test('#put(path, obj, { batch }, fn)', t => {
-    t.end();
+    const db = level();
+    const p = new Pathwise(db);
+    const b = db.batch();
+    let nextTick = true;
+    p.put([], { foo: 'bar', beep: 'boop' }, { batch: b }, err => {
+      nextTick = false;
+      t.error(err);
+      t.deepEqual(b.ops, [
+        { type: 'put', key: 'foo', value: 'bar' },
+        { type: 'put', key: 'beep', value: 'boop' }
+      ]);
+      t.end();
+    });
+    t.ok(nextTick);
   });
 
   t.test('#batch(ops, fn)', t => {
