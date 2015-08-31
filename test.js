@@ -118,7 +118,25 @@ test('Pathwise', t => {
   });
 
   t.test('#del(path, fn)', t => {
-    t.end();
+    const p = new Pathwise(level());
+    p.put([], { foo: { bar: 'baz', beep: 'boop' } }, err => {
+      t.error(err);
+      p.del(['foo', 'bar'], err => {
+        t.error(err);
+        p.get([], (err, data) => {
+          t.error(err);
+          t.deepEqual(data, { foo: { beep: 'boop' } });
+          p.del([], err => {
+            t.error(err);
+            p.get([], (err, data) => {
+              t.error(err);
+              t.deepEqual(data, {});
+              t.end();
+            });
+          });
+        });
+      });
+    });
   });
 
   t.test('#del(path, { batch }, fn)', t => {
