@@ -97,7 +97,24 @@ test('Pathwise', t => {
   });
 
   t.test('#get(path, fn)', t => {
-    t.end();
+    const p = new Pathwise(level());
+    const o = { foo: { bar: 'baz' } };
+    p.put([], o, err => {
+      t.error(err);
+      p.get([], (err, data) => {
+        t.error(err);
+        t.deepEqual(data, o);
+        p.get(['foo'], (err, data) => {
+          t.error(err);
+          t.deepEqual(data, o.foo);
+          p.get(['foo', 'bar'], (err, data) => {
+            t.error(err);
+            t.equal(data, o.foo.bar);
+            t.end();
+          });
+        });
+      });
+    });
   });
 
   t.test('#del(path, fn)', t => {
