@@ -9,6 +9,53 @@ test('Pathwise', t => {
   t.ok(new Pathwise(level()));
 
   t.test('#put(path, obj, fn)', t => {
+    t.test('object', t => {
+      const p = new Pathwise(level());
+      const o = { foo: 'bar', bar: 'baz' };
+      p.put([], o, err => {
+        t.error(err);
+        p.get([], (err, obj) => {
+          t.error(err);
+          t.deepEqual(obj, o);
+          t.end();
+        });
+      });
+    });
+    t.test('array', t => {
+      const p = new Pathwise(level());
+      const a = ['foo', 'bar'];
+      p.put([], a, err => {
+        t.error(err);
+        p.get([], (err, array) => {
+          t.error(err);
+          t.deepEqual(array, a);
+          t.end();
+        });
+      });
+    });
+    t.test('other', t => {
+      const p = new Pathwise(level());
+      p.put([], 3, err => {
+        t.error(err);
+        p.get([], (err, other) => {
+          t.error(err);
+          t.equal(other, 3);
+          t.end();
+        });
+      });
+    });
+    t.test('integration', t => {
+      const p = new Pathwise(level());
+      const o = { foo: 'bar', bar: ['baz', { yo: 9 }] };
+      p.put([], o, err => {
+        t.error(err);
+        p.get([], (err, obj) => {
+          t.error(err);
+          t.deepEqual(obj, o);
+          t.end();
+        });
+      });
+    })
     t.end();
   });
 
