@@ -1,6 +1,6 @@
 {
   "name": "level-pathwise",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Turn a leveldb into one object of arbitrary size. Efficiently+atomically update+read parts",
   "main": "build.js",
   "scripts": {
