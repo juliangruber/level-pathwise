@@ -1,7 +1,7 @@
 
 # level-pathwise
 
-  Nested storage engine, basically letting you treat your leveldb like one big object which you can select subjections of.
+  Turn a [leveldb](http://leveldb.org) into one huge object of arbitrary size! Efficiently and atomically update and read parts of it!
 
   [![build status](https://secure.travis-ci.org/juliangruber/level-pathwise.svg)](http://travis-ci.org/juliangruber/level-pathwise)
 
