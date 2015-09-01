@@ -47,7 +47,7 @@ store.children(['foo'], function(err, children){
 });
 
 // remove some data,
-// like deelte data.foo.baz
+// like delete data.foo.baz
 
 store.del(['foo', 'baz'], function(err){});
 
