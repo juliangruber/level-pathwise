@@ -1,8 +1,6 @@
 
 # level-pathwise
 
-  Work In Progress,
-
   Nested storage engine, basically letting you treat your leveldb like one big object which you can select subjections of.
 
   [![build status](https://secure.travis-ci.org/juliangruber/level-pathwise.svg)](http://travis-ci.org/juliangruber/level-pathwise)
@@ -10,39 +8,56 @@
 ## Example
 
 ```js
-import Pathwise from 'level-pathwise';
-import { default as level } from 'level';
+var Pathwise = require('level-pathwise');
+var level = require('level');
 
-const store = new Pathwise(level('db'));
+var store = new Pathwise(level('db'));
+
+// insert an object on the root level
 
 store.put([], {
   foo: {
     bar: ['beep', 'boop'],
     baz: 'bleep'  
   }
-}, err => {
-  store.get([], (err, obj) => {
-    // obj => {"foo":{"bar":{"0":"beep","1":"boop"},"baz":"bleep"}}
+}, function(err){});
 
-    store.del(['foo', 'bar'], err => {
-      store.get([], (err, obj) => {
-        // obj => {"foo":{"baz":"bleep"}}
+// read it out
 
-        store.children([], console.log);
-        // => ['foo']
-
-        store.get(['foo', 'baz'], (err, obj) => {
-          // obj => "bleep"
-
-          store.batch([
-            { type: 'put', path: [], data: { i: said: { what: 'what' } } },
-            { type: 'del', path: ['foo'] }
-          ], console.log);
-        });
-      });
-    });
-  });
+store.get([], function(err, obj){
+  // => {
+  //      foo: {
+  //        bar: ['beep', 'boop'],
+  //        baz: 'bleep'  
+  //      }
+  //    }
 });
+
+// read only a subsection of the object,
+// like data.foo.bar
+
+store.get(['foo', 'bar'], function(err, obj){
+  // => ['beep', 'boop']
+});
+
+// read the direct children of a path
+
+store.children(['foo'], function(err, children){
+  // => ['bar', 'baz']
+});
+
+// remove some data,
+// like deelte data.foo.baz
+
+store.del(['foo', 'baz'], function(err){});
+
+// perform several updates in one atomic step,
+// like data.i.said.what = 'what'; delete data.foo;
+
+store.batch([
+  { type: 'put', path: [], data: { i: said: { what: 'what' } } },
+  { type: 'del', path: ['foo'] }
+], function(){});
 ```
 
 ## Installation
