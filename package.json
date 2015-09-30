@@ -8,18 +8,18 @@
   },
   "repository": "juliangruber/level-pathwise",
   "devDependencies": {
-    "babel": "^5.8.21",
-    "level": "^1.3.0",
-    "memdb": "^1.0.1",
-    "tape": "^4.2.0"
+    "babel": "5.8.23",
+    "level": "1.3.0",
+    "memdb": "1.0.1",
+    "tape": "4.2.0"
   },
   "license": "MIT",
   "dependencies": {
-    "after": "^0.8.1",
-    "bytewise": "^1.1.0",
-    "component-type": "^1.1.0",
-    "level-delete-range": "^0.1.0",
-    "levelup-defaults": "^1.0.2",
-    "stream-to-array": "^2.0.2"
+    "after": "0.8.1",
+    "bytewise": "1.1.0",
+    "component-type": "1.2.0",
+    "level-delete-range": "0.1.0",
+    "levelup-defaults": "1.0.2",
+    "stream-to-array": "2.0.2"
   }
 }
