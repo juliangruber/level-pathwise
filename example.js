@@ -1,41 +1,41 @@
-import Pathwise from './';
-import { default as level } from 'level';
+var Pathwise = require('./');
+var level = require('level');
 
-const db = level('db');
-const store = new Pathwise(db);
+var db = level('db');
+var store = new Pathwise(db);
 
 store.put([], {
   foo: {
     bar: ['beep', 'boop'],
     baz: 'bleep'  
   }
-}, err => {
+}, function(err){
   if (err) throw err;
 
-  store.get([], (err, obj) => {
+  store.get([], function(err, obj){
     if (err) throw err;
     
     console.log('=> %j', obj);
 
-    store.del(['foo', 'bar'], err => {
+    store.del(['foo', 'bar'], function(err){
       if (err) throw err;
 
-      store.get([], (err, obj) => {
+      store.get([], function(err, obj){
         if (err) throw err;
 
         console.log('=> %j', obj);
 
-        store.get(['foo', 'baz'], (err, obj) => {
+        store.get(['foo', 'baz'], function(err, obj){
           if (err) throw err;
 
           console.log('=> %j', obj);
 
-          store.children(['foo', 'baz'], (err, children) => {
+          store.children(['foo', 'baz'], function(err, children){
             if (err) throw err;
 
             console.log('=> %j', children);
 
-            store.children([], (err, children) => {
+            store.children([], function(err, children){
               if (err) throw err;
 
               console.log('=> %j', children);
@@ -43,10 +43,10 @@ store.put([], {
               store.batch([
                 { type: 'put', path: [], data: { i: { said: { what: 'yo' } } } },
                 { type: 'del', path: ['foo'] }
-              ], err => {
+              ], function(err){
                 if (err) throw err;
 
-                store.get([], (err, obj) => {
+                store.get([], function(err, obj){
                   if (err) throw err;
 
                   console.log('=> %j', obj);

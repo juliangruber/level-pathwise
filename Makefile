@@ -1,12 +1,6 @@
 
-build: index.js
-	@node_modules/.bin/babel index.js > build.js
+test:
+	@node_modules/.bin/tape test.js
 
-test: build
-	@node_modules/.bin/babel-node test.js
-
-example: build
-	@node_modules/.bin/babel-node example.js
-
-.PHONY: test example
+.PHONY: test
 

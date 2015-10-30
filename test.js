@@ -1,55 +1,55 @@
-import { default as test } from 'tape';
-import Pathwise from './';
-import { default as level } from 'memdb';
+var test = require('tape');
+var Pathwise = require('./');
+var level = require('memdb');
 
-test('Pathwise', t => {
-  t.throws(() => {
+test('Pathwise', function(t){
+  t.throws(function(){
     new Pathwise();
   });
   t.ok(new Pathwise(level()));
 
-  t.test('#put(path, obj, fn)', t => {
-    t.test('object', t => {
-      const p = new Pathwise(level());
-      const o = { foo: 'bar', bar: 'baz' };
-      p.put([], o, err => {
+  t.test('#put(path, obj, fn)', function(t){
+    t.test('object', function(t){
+      var p = new Pathwise(level());
+      var o = { foo: 'bar', bar: 'baz' };
+      p.put([], o, function(err){
         t.error(err);
-        p.get([], (err, obj) => {
+        p.get([], function(err, obj){
           t.error(err);
           t.deepEqual(obj, o);
           t.end();
         });
       });
     });
-    t.test('array', t => {
-      const p = new Pathwise(level());
-      const a = ['foo', 'bar'];
-      p.put([], a, err => {
+    t.test('array', function(t){
+      var p = new Pathwise(level());
+      var a = ['foo', 'bar'];
+      p.put([], a, function(err){
         t.error(err);
-        p.get([], (err, array) => {
+        p.get([], function(err, array){
           t.error(err);
           t.deepEqual(array, a);
           t.end();
         });
       });
     });
-    t.test('other', t => {
-      const p = new Pathwise(level());
-      p.put([], 3, err => {
+    t.test('other', function(t){
+      var p = new Pathwise(level());
+      p.put([], 3, function(err){
         t.error(err);
-        p.get([], (err, other) => {
+        p.get([], function(err, other){
           t.error(err);
           t.equal(other, 3);
           t.end();
         });
       });
     });
-    t.test('integration', t => {
-      const p = new Pathwise(level());
-      const o = { foo: 'bar', bar: ['baz', { yo: 9 }] };
-      p.put([], o, err => {
+    t.test('integration', function(t){
+      var p = new Pathwise(level());
+      var o = { foo: 'bar', bar: ['baz', { yo: 9 }] };
+      p.put([], o, function(err){
         t.error(err);
-        p.get([], (err, obj) => {
+        p.get([], function(err, obj){
           t.error(err);
           t.deepEqual(obj, o);
           t.end();
@@ -59,12 +59,12 @@ test('Pathwise', t => {
     t.end();
   });
 
-  t.test('#put(path, obj, { batch }, fn)', t => {
-    const db = level();
-    const p = new Pathwise(db);
-    const b = db.batch();
-    let nextTick = true;
-    p.put([], { foo: 'bar', beep: 'boop' }, { batch: b }, err => {
+  t.test('#put(path, obj, { batch }, fn)', function(t){
+    var db = level();
+    var p = new Pathwise(db);
+    var b = db.batch();
+    var nextTick = true;
+    p.put([], { foo: 'bar', beep: 'boop' }, { batch: b }, function(err){
       nextTick = false;
       t.error(err);
       t.deepEqual(b.ops, [
@@ -76,17 +76,17 @@ test('Pathwise', t => {
     t.ok(nextTick);
   });
 
-  t.test('#batch(ops, fn)', t => {
-    const p = new Pathwise(level());
-    p.batch([{ type: 'put', path: [], data: 'hey' }], err => {
+  t.test('#batch(ops, fn)', function(t){
+    var p = new Pathwise(level());
+    p.batch([{ type: 'put', path: [], data: 'hey' }], function(err){
       t.error(err);
-      p.get([], (err, data) => {
+      p.get([], function(err, data){
         t.error(err);
         t.equal(data, 'hey');
 
-        p.batch([{ type: 'del', path: [] }], err => {
+        p.batch([{ type: 'del', path: [] }], function(err){
           t.error(err);
-          p.get([], (err, data) => {
+          p.get([], function(err, data){
             t.error(err);
             t.deepEqual(data, {});
             t.end();
@@ -96,18 +96,18 @@ test('Pathwise', t => {
     });
   });
 
-  t.test('#get(path, fn)', t => {
-    const p = new Pathwise(level());
-    const o = { foo: { bar: 'baz' } };
-    p.put([], o, err => {
+  t.test('#get(path, fn)', function(t){
+    var p = new Pathwise(level());
+    var o = { foo: { bar: 'baz' } };
+    p.put([], o, function(err){
       t.error(err);
-      p.get([], (err, data) => {
+      p.get([], function(err, data){
         t.error(err);
         t.deepEqual(data, o);
-        p.get(['foo'], (err, data) => {
+        p.get(['foo'], function(err, data){
           t.error(err);
           t.deepEqual(data, o.foo);
-          p.get(['foo', 'bar'], (err, data) => {
+          p.get(['foo', 'bar'], function(err, data){
             t.error(err);
             t.equal(data, o.foo.bar);
             t.end();
@@ -117,18 +117,18 @@ test('Pathwise', t => {
     });
   });
 
-  t.test('#del(path, fn)', t => {
-    const p = new Pathwise(level());
-    p.put([], { foo: { bar: 'baz', beep: 'boop' } }, err => {
+  t.test('#del(path, fn)', function(t){
+    var p = new Pathwise(level());
+    p.put([], { foo: { bar: 'baz', beep: 'boop' } }, function(err){
       t.error(err);
-      p.del(['foo', 'bar'], err => {
+      p.del(['foo', 'bar'], function(err){
         t.error(err);
-        p.get([], (err, data) => {
+        p.get([], function(err, data){
           t.error(err);
           t.deepEqual(data, { foo: { beep: 'boop' } });
-          p.del([], err => {
+          p.del([], function(err){
             t.error(err);
-            p.get([], (err, data) => {
+            p.get([], function(err, data){
               t.error(err);
               t.deepEqual(data, {});
               t.end();
@@ -139,15 +139,15 @@ test('Pathwise', t => {
     });
   });
 
-  t.test('#del(path, { batch }, fn)', t => {
-    const db = level();
-    const p = new Pathwise(db);
-    p.put([], { foo: 'bar', beep: 'boop' }, err => {
+  t.test('#del(path, { batch }, fn)', function(t){
+    var db = level();
+    var p = new Pathwise(db);
+    p.put([], { foo: 'bar', beep: 'boop' }, function(err){
       t.error(err);
 
-      const b = db.batch();
-      let nextTick = true;
-      p.del([], { batch: b }, err => {
+      var b = db.batch();
+      var nextTick = true;
+      p.del([], { batch: b }, function(err){
         nextTick = false;
         t.deepEqual(b.ops, [
           { type: 'del', key: 'beep' },
@@ -159,17 +159,17 @@ test('Pathwise', t => {
     });
   });
 
-  t.test('#children(path, fn)', t => {
-    const p = new Pathwise(level());
-    p.put([], { foo: { bar: 'baz' } }, err => {
+  t.test('#children(path, fn)', function(t){
+    var p = new Pathwise(level());
+    p.put([], { foo: { bar: 'baz' } }, function(err){
       t.error(err);
-      p.children([], (err, children) => {
+      p.children([], function(err, children){
         t.error(err);
         t.deepEqual(children, ['foo']);
-        p.children(['foo'], (err, children) => {
+        p.children(['foo'], function(err, children){
           t.error(err);
           t.deepEqual(children, ['bar']);
-          p.children(['foo', 'bar'], (err, children) => {
+          p.children(['foo', 'bar'], function(err, children){
             t.error(err);
             t.deepEqual(children, ['baz']);
             t.end();

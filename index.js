@@ -1,110 +1,123 @@
-import assert from 'assert';
-import { default as defaults } from 'levelup-defaults';
-import { default as bytewise } from 'bytewise';
-import { default as type } from 'component-type';
-import { default as after } from 'after';
-import { default as deleteRange } from 'level-delete-range';
-import { default as streamToArray } from 'stream-to-array';
+var assert = require('assert');
+var defaults = require('levelup-defaults');
+var bytewise = require('bytewise');
+var type = require('component-type');
+var after = require('after');
+var streamToArray = require('stream-to-array');
 
-export default class Pathwise {
-  constructor(db) {
-    assert(db, 'db required');
-    this._db = defaults(db, {
-      keyEncoding: bytewise,
-      valueEncoding: 'json'
-    });
-  }
-  put(path, obj, opts, fn) {
-    if (typeof opts == 'function') [opts, fn] = [{}, opts];
-    const batch = opts.batch || this._db.batch();
-    this._write(batch, path, obj, fn);  
-    if (opts.batch) setImmediate(fn);
-    else batch.write(fn);
-  }
-  _write(batch, key, obj, fn) {
-    switch(type(obj)) {
-      case 'object':
-        const keys = Object.keys(obj);
-        const next = after(keys.length, fn);
-        keys.forEach(k => {
-          this._write(batch, key.concat(k), obj[k], next);
-        });
-        break;
-      case 'array':
-        this._write(batch, key, arrToObj(obj), fn);
-        break;
-      default:
-        batch.put(key, obj);
-        break;
-    }
-  }
-  batch(ops, fn) {
-    const batch = this._db.batch();
-    const next = after(ops.length, err => {
-      if (err) return fn(err);
-      batch.write(fn);
-    });
-    ops.forEach(op => {
-      if (op.type == 'put') this.put(op.path, op.data, { batch: batch }, next);
-      else if (op.type == 'del') this.del(op.path, { batch: batch }, next);
-    });
-  }
-  get(path, fn) {
-    let ret = {};
-    let el = ret;
+module.exports = Pathwise;
 
-    streamToArray(this._db.createReadStream({
-      start: path,
-      end: path.concat(undefined)
-    }), (err, data) => {
-      if (err) return fn(err);
+function Pathwise(db){
+  assert(db, 'db required');
+  this._db = defaults(db, {
+    keyEncoding: bytewise,
+    valueEncoding: 'json'
+  });
+}
 
-      data.forEach((kv) => {
-        const segs = kv.key.slice(path.length);
-        if (segs.length) {
-          segs.forEach((seg, idx) => {
-            if (!el[seg]) {
-              if (idx == segs.length - 1) {
-                el[seg] = kv.value;
-              } else {
-                el[seg] = {};
-              }
-            }
-            el = el[seg];
-          });
-          el = ret;
-        } else {
-          ret = kv.value;
-        }
+Pathwise.prototype.put = function(path, obj, opts, fn){
+  if (typeof opts == 'function') {
+    fn = opts;
+    opts = {};
+  }
+  var batch = opts.batch || this._db.batch();
+  this._write(batch, path, obj, fn);  
+  if (opts.batch) setImmediate(fn);
+  else batch.write(fn);
+};
+
+Pathwise.prototype._write = function(batch, key, obj, fn){
+  var self = this;
+  switch(type(obj)) {
+    case 'object':
+      var keys = Object.keys(obj);
+      var next = after(keys.length, fn);
+      keys.forEach(function(k){
+        self._write(batch, key.concat(k), obj[k], next);
       });
-      fn(null, ret);
-    });
+      break;
+    case 'array':
+      this._write(batch, key, arrToObj(obj), fn);
+      break;
+    default:
+      batch.put(key, obj);
+      break;
   }
-  del(path, opts, fn) {
-    if (typeof opts == 'function') [opts, fn] = [{}, opts];
-    const batch = opts.batch || this._db.batch();
+};
 
-    streamToArray(this._db.createKeyStream({
-      start: path,
-      end: path.concat(undefined)
-    }), (err, keys) => {
-      if (err) return fn(err);
-      keys.forEach(key => batch.del(key));
-      if (opts.batch) fn();
-      else batch.write(fn);
+Pathwise.prototype.batch = function(ops, fn) {
+  var self = this;
+  var batch = this._db.batch();
+  var next = after(ops.length, function(err){
+    if (err) return fn(err);
+    batch.write(fn);
+  });
+  ops.forEach(function(op){
+    if (op.type == 'put') self.put(op.path, op.data, { batch: batch }, next);
+    else if (op.type == 'del') self.del(op.path, { batch: batch }, next);
+  });
+};
+
+Pathwise.prototype.get = function(path, fn){
+  var ret = {};
+  var el = ret;
+
+  streamToArray(this._db.createReadStream({
+    start: path,
+    end: path.concat(undefined)
+  }), function(err, data){
+    if (err) return fn(err);
+
+    data.forEach(function(kv){
+      var segs = kv.key.slice(path.length);
+      if (segs.length) {
+        segs.forEach((seg, idx) => {
+          if (!el[seg]) {
+            if (idx == segs.length - 1) {
+              el[seg] = kv.value;
+            } else {
+              el[seg] = {};
+            }
+          }
+          el = el[seg];
+        });
+        el = ret;
+      } else {
+        ret = kv.value;
+      }
     });
+    fn(null, ret);
+  });
+};
+
+Pathwise.prototype.del = function(path, opts, fn){
+  if (typeof opts == 'function') {
+    fn = opts;
+    opts = {};
   }
-  children(path, fn) {
-    streamToArray(this._db.createReadStream({
-      start: path,
-      end: path.concat(undefined)
-    }), (err, kv) => {
-      if (err) return fn(err);
-      fn(null, kv.map(_kv => {
-        return _kv.key[path.length] || _kv.value;
-      }));
-    });
-  }
+  var batch = opts.batch || this._db.batch();
+
+  streamToArray(this._db.createKeyStream({
+    start: path,
+    end: path.concat(undefined)
+  }), function(err, keys){
+    if (err) return fn(err);
+    keys.forEach(function(key){ batch.del(key) });
+    if (opts.batch) fn();
+    else batch.write(fn);
+  });
+};
+
+Pathwise.prototype.children = function(path, fn) {
+  streamToArray(this._db.createReadStream({
+    start: path,
+    end: path.concat(undefined)
+  }), function(err, kv){
+    if (err) return fn(err);
+    fn(null, kv.map(function(_kv){
+      return _kv.key[path.length] || _kv.value;
+    }));
+  });
 }
 
 function arrToObj(arr){
