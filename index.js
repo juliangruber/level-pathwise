@@ -71,7 +71,7 @@ Pathwise.prototype.get = function(path, fn){
     data.forEach(function(kv){
       var segs = kv.key.slice(path.length);
       if (segs.length) {
-        segs.forEach((seg, idx) => {
+        segs.forEach(function(seg, idx){
           if (!el[seg]) {
             if (idx == segs.length - 1) {
               el[seg] = kv.value;
@@ -122,7 +122,7 @@ Pathwise.prototype.children = function(path, fn) {
 
 function arrToObj(arr){
   var obj = {};
-  arr.forEach((el, idx) => {
+  arr.forEach(function(el, idx){
     obj[idx] = el;
   });
   return obj;
