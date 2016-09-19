@@ -40,6 +40,15 @@ store.get(['foo', 'bar'], function(err, obj){
   // => ['beep', 'boop']
 });
 
+// extend an object,
+// like data.foo.key = 'value'
+
+store.put([], {
+  foo: {
+    key: 'value'
+  }
+})
+
 // read the direct children of a path
 
 store.children(['foo'], function(err, children){
@@ -106,4 +115,3 @@ $ npm install level-pathwise
 ## License
 
   MIT
-

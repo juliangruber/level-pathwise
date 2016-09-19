@@ -55,7 +55,26 @@ test('Pathwise', function(t){
           t.end();
         });
       });
-    })
+    });
+    t.test('extend', function(t){
+      var p = new Pathwise(level());
+      p.put([], { foo: { hi: 'you' } }, function(err){
+        t.error(err);
+        p.put([], { foo: { beep: 'boop' } }, function(err){
+          t.error(err);
+          p.get([], function(err, obj){
+            t.error(err);
+            t.deepEqual(obj, {
+              foo: {
+                hi: 'you',
+                beep: 'boop'
+              }
+            });
+            t.end();
+          });
+        });
+      });
+    });
     t.end();
   });
 
@@ -181,4 +200,3 @@ test('Pathwise', function(t){
 
   t.end();
 });
-
