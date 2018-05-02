@@ -7,16 +7,16 @@
   },
   "repository": "juliangruber/level-pathwise",
   "devDependencies": {
-    "level": "^1.3.0",
-    "memdb": "^1.0.1",
+    "level": "^3.0.0",
+    "level-mem": "^2.0.0",
     "tape": "^4.2.0"
   },
   "license": "MIT",
   "dependencies": {
-    "after": "^0.8.1",
+    "after": "^0.8.2",
     "bytewise": "^1.1.0",
-    "component-type": "^1.1.0",
+    "component-type": "^1.2.1",
     "levelup-defaults": "^2.0.0",
-    "stream-to-array": "^2.0.2"
+    "stream-to-array": "^2.3.0"
   }
 }

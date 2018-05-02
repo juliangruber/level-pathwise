@@ -40,7 +40,7 @@ Pathwise.prototype._write = function(batch, key, obj, fn){
       this._write(batch, key, arrToObj(obj), fn);
       break;
     default:
-      batch.put(key, obj);
+      batch.put(bytewise.encode(key), JSON.stringify(obj));
       break;
   }
 };
@@ -102,7 +102,7 @@ Pathwise.prototype.del = function(path, opts, fn){
     end: path.concat(undefined)
   }), function(err, keys){
     if (err) return fn(err);
-    keys.forEach(function(key){ batch.del(key) });
+    keys.forEach(function(key){ batch.del(bytewise.encode(key)) });
     if (opts.batch) fn();
     else batch.write(fn);
   });

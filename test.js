@@ -1,6 +1,7 @@
 var test = require('tape');
 var Pathwise = require('./');
-var level = require('memdb');
+var level = require('level-mem');
+var bytewise = require('bytewise');
 
 test('Pathwise', function(t){
   t.throws(function(){
@@ -87,8 +88,8 @@ test('Pathwise', function(t){
       nextTick = false;
       t.error(err);
       t.deepEqual(b.ops, [
-        { type: 'put', key: 'foo', value: 'bar' },
-        { type: 'put', key: 'beep', value: 'boop' }
+        { type: 'put', key: bytewise.encode(['foo']), value: JSON.stringify('bar') },
+        { type: 'put', key: bytewise.encode(['beep']), value: JSON.stringify('boop') }
       ]);
       t.end();
     });
@@ -169,8 +170,8 @@ test('Pathwise', function(t){
       p.del([], { batch: b }, function(err){
         nextTick = false;
         t.deepEqual(b.ops, [
-          { type: 'del', key: 'beep' },
-          { type: 'del', key: 'foo' }
+          { type: 'del', key: bytewise.encode(['beep']) },
+          { type: 'del', key: bytewise.encode(['foo']) }
         ]);
         t.end();
       });
