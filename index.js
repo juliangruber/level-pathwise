@@ -20,6 +20,12 @@ Pathwise.prototype.put = function(path, obj, opts, fn){
     fn = opts;
     opts = {};
   }
+  if (!opts) {
+    opts = {};
+  }
+  if (!fn) {
+    fn = () => {};
+  }
   var batch = opts.batch || this._db.batch();
   this._write(batch, path, obj, fn);  
   if (opts.batch) setImmediate(fn);
